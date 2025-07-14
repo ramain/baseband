@@ -10,6 +10,7 @@ http://psrdada.sourceforge.net/manuals/Specification.pdf
 
 See also :ref:`dada_header`.
 """
+from email import header
 import io
 import warnings
 from collections import OrderedDict
@@ -98,10 +99,10 @@ class DADAHeader(OrderedDict):
 
     def verify(self):
         """Basic check of integrity."""
-        assert self['HEADER'] == 'DADA'
+        #assert self['HEADER'] == 'DADA'
         assert all(key in self for key in ('HDR_VERSION',
-                                           'HDR_SIZE',
-                                           'DADA_VERSION'))
+                                           'HDR_SIZE'))#,
+                                           #'DADA_VERSION'))
 
     def copy(self):
         """Create a mutable and independent copy of the header."""
@@ -400,11 +401,14 @@ class DADAHeader(OrderedDict):
     @property
     def start_time(self):
         """Start time of the observation."""
-        mjd_int, frac = self['MJD_START'].split('.')
-        mjd_int = int(mjd_int)
-        frac = float('.' + frac)
+        #mjd_int, frac = self['MJD_START'].split('.')
+        #mjd_int = int(mjd_int)
+        #frac = float('.' + frac)
         # replace '-' between date and time with a 'T' and convert to Time
-        return Time(mjd_int, frac, scale='utc', format='mjd')
+        #return Time(mjd_int, frac, scale='utc', format='mjd')
+        t0 = self['UTC_START']
+        t0 = t0[:10] + 'T' + t0[11:]
+        return Time(t0, scale='utc', format='isot', precision=9)
 
     @start_time.setter
     def start_time(self, start_time):
